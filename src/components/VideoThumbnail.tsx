@@ -7,6 +7,7 @@ const isMobile = () => window.innerWidth < 768;
 interface VideoThumbnailProps {
   src: string;
   title: string;
+  thumbnailSrc?: string; // New prop for thumbnail image
   aspectRatio?: "video" | "vertical";
   className?: string;
   isShowreel?: boolean;
@@ -15,6 +16,7 @@ interface VideoThumbnailProps {
 export function VideoThumbnail({
   src, 
   title,
+  thumbnailSrc,
   aspectRatio = "video",
   className = "",
   isShowreel = false,
@@ -25,6 +27,7 @@ export function VideoThumbnail({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isInView, setIsInView] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [thumbnailLoaded, setThumbnailLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
 
@@ -53,7 +56,7 @@ export function VideoThumbnail({
     return () => observer.disconnect();
   }, []);
 
-  // Load video when in view but don't autoplay
+  // Preload video when in view but don't autoplay
   useEffect(() => {
     if (isInView && videoRef.current && !videoLoaded) {
       const video = videoRef.current;
@@ -115,22 +118,35 @@ export function VideoThumbnail({
       } ${className}`}
       onClick={handleClick}
     >
-      {/* Single video element that handles both preview and playback */}
+      {/* Thumbnail Image - Shows immediately */}
+      {thumbnailSrc && (
+        <img
+          src={thumbnailSrc}
+          alt={`${title} thumbnail`}
+          className={`absolute inset-0 w-full h-full ${
+            isFullscreen ? 'object-contain' : 'object-cover'
+          } transition-opacity duration-300 ${
+            isPlaying && videoLoaded ? 'opacity-0' : 'opacity-100'
+          }`}
+          onLoad={() => setThumbnailLoaded(true)}
+          onError={() => console.error('Thumbnail failed to load:', thumbnailSrc)}
+        />
+      )}
+
+      {/* Video element - Hidden until playing */}
       {isInView && (
         <video 
           ref={videoRef}
           className={`absolute inset-0 w-full h-full ${
             isFullscreen ? 'object-contain' : 'object-cover'
-          } transition-opacity duration-300 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
+          } transition-opacity duration-300 ${
+            videoLoaded && isPlaying ? 'opacity-100' : 'opacity-0'
+          }`}
           loop={isShowreel}
           playsInline
-          preload="metadata" // Only load metadata for thumbnail
+          preload="none" // Don't preload video data
           onLoadedData={() => {
             setVideoLoaded(true);
-            // Seek to 1 second for better thumbnail
-            if (videoRef.current && !hasInteracted) { 
-              videoRef.current.currentTime = 0;
-            }
           }}
           onPlay={() => {
             setIsPlaying(true);
@@ -147,8 +163,8 @@ export function VideoThumbnail({
         />
       )}
 
-      {/* Fallback background when video is loading */}
-      {!videoLoaded && (
+      {/* Fallback background when neither thumbnail nor video is loaded */}
+      {!thumbnailLoaded && !videoLoaded && (
         <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
           <div className="text-white/40 text-center">
             <div className="w-8 h-8 border-2 border-white/20 border-t-white/60 rounded-full animate-spin mx-auto mb-2" />

@@ -7,6 +7,7 @@ import { SplashScreen } from './components/SplashScreen';
 import { LazyVideo } from './components/LazyVideo';
 import { useThrottledMouseTracking } from './hooks/useThrottledMouseTracking';
 import { MobileBadgeCarousel } from './components/MobileBadgeCarousel';
+import { AdminPanel } from './components/AdminPanel';
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -103,6 +104,7 @@ function App() {
  const [showportrait, setShowportrait] = React.useState(true);
    const [showbase, setShowbase] = React.useState(true);
    const [showeyes, setShoweyes] = React.useState(true);
+  const [customVideos, setCustomVideos] = React.useState<any[]>([]);
   const heroRef = useRef<HTMLDivElement>(null);
   const portraitRef = useRef<HTMLDivElement>(null);
   const baseRef = useRef<HTMLDivElement>(null);
@@ -503,6 +505,7 @@ gsap.to(backgroundTextRef.current, {
             <div className="max-w-4xl mx-auto">
               <VideoThumbnail
                 src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+               thumbnailSrc="/thumbnails/showreel-thumb.jpg"
                 title="SHOW REEL"
                 isShowreel={true}
               />
@@ -516,19 +519,47 @@ gsap.to(backgroundTextRef.current, {
   </h3>
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
     {[
-      "https://ia600904.us.archive.org/35/items/portfolio_202508/Outworking%20everyone%20isn%E2%80%99t%20that%20hard%20v1.mp4",
-      "https://ia600904.us.archive.org/35/items/portfolio_202508/What%20is%20the%20most%20normal%20episode%20of%20Family%20Guy%20v3.mp4",
-"https://ia600904.us.archive.org/35/items/portfolio_202508/Never%20running%20out%20of%20things%20to%20say%20is%20easy%2C%20actually%20isn%27t%C2%A0that%C2%A0hard%20v1.mp4",
-      "https://ia600904.us.archive.org/35/items/portfolio_202508/sample1_V1.mp4",
-      "https://ia600904.us.archive.org/35/items/portfolio_202508/The%20entire%20history%20of%20Thomas%20Shelby%20v2_1.mp4",
-      "https://ia600904.us.archive.org/35/items/portfolio_202508/WOLF%27S%20LAIR%20WHAT%20AI%20FOUND%20IN%20THIS%20HIDDEN%20NAZI%20BUNKER%20FROM%20WORLD%20WAR%20II%20IS%20TERRIFYING.mp4",
-      "https://ia800906.us.archive.org/16/items/flirting-with-women-isnt-that-hard-v-1/Flirting%20with%20women%20isn%27t%20that%20hard%20v1.mp4",
-      "https://ia600904.us.archive.org/35/items/portfolio_202508/Young%20Actresses%20Who%20Tragically%20Passed%20Away.mp4",
-      "https://ia601002.us.archive.org/33/items/sample-1-1/sample1%20%281%29.mp4",
-    ].map((url, i) => (
+      {
+        src: "https://ia600904.us.archive.org/35/items/portfolio_202508/Outworking%20everyone%20isn%E2%80%99t%20that%20hard%20v1.mp4",
+        thumbnail: "/thumbnails/video-01-thumb.jpg"
+      },
+      {
+        src: "https://ia600904.us.archive.org/35/items/portfolio_202508/What%20is%20the%20most%20normal%20episode%20of%20Family%20Guy%20v3.mp4",
+        thumbnail: "/thumbnails/video-02-thumb.jpg"
+      },
+      {
+        src: "https://ia600904.us.archive.org/35/items/portfolio_202508/Never%20running%20out%20of%20things%20to%20say%20is%20easy%2C%20actually%20isn%27t%C2%A0that%C2%A0hard%20v1.mp4",
+        thumbnail: "/thumbnails/video-03-thumb.jpg"
+      },
+      {
+        src: "https://ia600904.us.archive.org/35/items/portfolio_202508/sample1_V1.mp4",
+        thumbnail: "/thumbnails/video-04-thumb.jpg"
+      },
+      {
+        src: "https://ia600904.us.archive.org/35/items/portfolio_202508/The%20entire%20history%20of%20Thomas%20Shelby%20v2_1.mp4",
+        thumbnail: "/thumbnails/video-05-thumb.jpg"
+      },
+      {
+        src: "https://ia600904.us.archive.org/35/items/portfolio_202508/WOLF%27S%20LAIR%20WHAT%20AI%20FOUND%20IN%20THIS%20HIDDEN%20NAZI%20BUNKER%20FROM%20WORLD%20WAR%20II%20IS%20TERRIFYING.mp4",
+        thumbnail: "/thumbnails/video-06-thumb.jpg"
+      },
+      {
+        src: "https://ia800906.us.archive.org/16/items/flirting-with-women-isnt-that-hard-v-1/Flirting%20with%20women%20isn%27t%20that%20hard%20v1.mp4",
+        thumbnail: "/thumbnails/video-07-thumb.jpg"
+      },
+      {
+        src: "https://ia600904.us.archive.org/35/items/portfolio_202508/Young%20Actresses%20Who%20Tragically%20Passed%20Away.mp4",
+        thumbnail: "/thumbnails/video-08-thumb.jpg"
+      },
+      {
+        src: "https://ia601002.us.archive.org/33/items/sample-1-1/sample1%20%281%29.mp4",
+        thumbnail: "/thumbnails/video-09-thumb.jpg"
+      },
+    ].map((video, i) => (
       <VideoThumbnail
         key={i}
-        src={url}
+        src={video.src}
+        thumbnailSrc={video.thumbnail}
         title={`PROJECT ${String(i + 1).padStart(2, "0")}`}
         isShowreel={false}
       />
@@ -543,22 +574,59 @@ gsap.to(backgroundTextRef.current, {
   </h3>
   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
     {[
-      "https://ia801704.us.archive.org/11/items/inkuuuu/inkuuuu.mp4",
-      "https://ia600902.us.archive.org/33/items/part-1-shorts/Inklwell%20media%20reel%201%20v3.mp4",
-      "https://ia801002.us.archive.org/18/items/shorts-2-part/Mj%20real_2.mp4",
-      "https://ia801007.us.archive.org/2/items/inkwell-media-video-1-v-2/inkwell%20media%20video%201%20v2.mp4",
-      "https://ia800902.us.archive.org/33/items/part-1-shorts/Inkwell%20media%20v2%20FINAL.mp4",
-      "https://ia600902.us.archive.org/33/items/part-1-shorts/Inkwell%20Media%20ki%20videooo.mp4",
-      "https://ia801002.us.archive.org/18/items/shorts-2-part/mj%20realtyyyyy2.mp4",
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4",
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4",
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
-    ].map((url, i) => (
+      {
+        src: "https://ia801704.us.archive.org/11/items/inkuuuu/inkuuuu.mp4",
+        thumbnail: "/thumbnails/social-01-thumb.jpg"
+      },
+      {
+        src: "https://ia600902.us.archive.org/33/items/part-1-shorts/Inklwell%20media%20reel%201%20v3.mp4",
+        thumbnail: "/thumbnails/social-02-thumb.jpg"
+      },
+      {
+        src: "https://ia801002.us.archive.org/18/items/shorts-2-part/Mj%20real_2.mp4",
+        thumbnail: "/thumbnails/social-03-thumb.jpg"
+      },
+      {
+        src: "https://ia801007.us.archive.org/2/items/inkwell-media-video-1-v-2/inkwell%20media%20video%201%20v2.mp4",
+        thumbnail: "/thumbnails/social-04-thumb.jpg"
+      },
+      {
+        src: "https://ia800902.us.archive.org/33/items/part-1-shorts/Inkwell%20media%20v2%20FINAL.mp4",
+        thumbnail: "/thumbnails/social-05-thumb.jpg"
+      },
+      {
+        src: "https://ia600902.us.archive.org/33/items/part-1-shorts/Inkwell%20Media%20ki%20videooo.mp4",
+        thumbnail: "/thumbnails/social-06-thumb.jpg"
+      },
+      {
+        src: "https://ia801002.us.archive.org/18/items/shorts-2-part/mj%20realtyyyyy2.mp4",
+        thumbnail: "/thumbnails/social-07-thumb.jpg"
+      },
+      {
+        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
+        thumbnail: "/thumbnails/social-08-thumb.jpg"
+      },
+      {
+        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4",
+        thumbnail: "/thumbnails/social-09-thumb.jpg"
+      },
+      {
+        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
+        thumbnail: "/thumbnails/social-10-thumb.jpg"
+      },
+      {
+        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4",
+        thumbnail: "/thumbnails/social-11-thumb.jpg"
+      },
+      {
+        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        thumbnail: "/thumbnails/social-12-thumb.jpg"
+      }
+    ].map((video, i) => (
       <VideoThumbnail
         key={i}
-        src={url}
+        src={video.src}
+        thumbnailSrc={video.thumbnail}
         title={`SOCIAL ${String(i + 1).padStart(2, "0")}`}
         aspectRatio="vertical"
       />
@@ -640,6 +708,9 @@ gsap.to(backgroundTextRef.current, {
           </div>
         </div>
       )}
+
+      {/* Admin Panel */}
+      <AdminPanel onVideoDataUpdate={setCustomVideos} />
     </div>
   );
 }
